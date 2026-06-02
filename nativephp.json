@@ -1,0 +1,25 @@
+{
+    "namespace": "MobileSplashscreen",
+
+    "bridge_functions": [],
+
+    "android": {
+        "dependencies": {
+            "implementation": [
+                "com.airbnb.android:lottie-compose:6.7.1"
+            ]
+        }
+    },
+
+    "ios": {},
+
+    "events": [
+        "S2BR\\MobileSplashscreen\\Events\\SplashscreenCompleted",
+        "S2BR\\MobileSplashscreen\\Events\\SplashscreenLoopCompleted"
+    ],
+
+    "hooks": {
+        "pre_compile": "nativephp:mobile-splashscreen:pre-compile",
+        "copy_assets": "nativephp:mobile-splashscreen:copy-assets"
+    }
+}

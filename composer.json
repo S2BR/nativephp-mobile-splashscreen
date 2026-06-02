@@ -1,0 +1,47 @@
+{
+    "name": "s2br/nativephp-mobile-splashscreen",
+    "description": "A feature-rich NativePHP plugin for animated mobile splash screens with gradients, events, and flexible configuration.",
+    "version": "1.0.0",
+    "type": "nativephp-plugin",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Israel Pereira",
+            "email": "ipereira.eu@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "ext-zip": "*",
+        "nativephp/mobile": "^3.0"
+    },
+    "require-dev": {
+        "pestphp/pest": "^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "S2BR\\MobileSplashscreen\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "S2BR\\MobileSplashscreen\\MobileSplashscreenServiceProvider"
+            ],
+            "aliases": {
+                "MobileSplashscreen": "S2BR\\MobileSplashscreen\\Facades\\MobileSplashscreen"
+            }
+        },
+        "nativephp": {
+            "manifest": "nativephp.json"
+        }
+    },
+    "scripts": {
+        "test": "pest"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}
