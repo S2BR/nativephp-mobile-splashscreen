@@ -2,6 +2,17 @@
 
 A feature-rich NativePHP plugin for animated mobile splash screens. Supports Lottie animations, gradient backgrounds, dark mode, seasonal scheduling, exit transitions, app icon overlay, and NativePHP event dispatching — all driven by a single config file and `.env` variables.
 
+
+## Gallery
+
+### Splashscreen with a lottie animation
+https://github.com/user-attachments/assets/b30b7ef2-81f0-46df-979f-95ec5192c495
+
+### Splashscreen with text and icon
+https://github.com/user-attachments/assets/aca02bf1-6fde-4ad5-94bf-df900693b555
+
+
+
 ---
 
 ## Requirements
