@@ -1,7 +1,6 @@
 {
     "name": "s2br/nativephp-mobile-splashscreen",
     "description": "A feature-rich NativePHP plugin for animated mobile splash screens with gradients, events, and flexible configuration.",
-    "version": "1.0.0",
     "type": "nativephp-plugin",
     "license": "MIT",
     "authors": [

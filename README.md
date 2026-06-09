@@ -64,6 +64,39 @@ MOBILE_SPLASHSCREEN_LOOP=false
 
 ---
 
+## Bundled Example Animations
+
+To help you get started, this package ships with **8 ready-to-use Lottie animations**. They live in the package's `resources/animations/` directory and can be published straight into your app:
+
+```bash
+php artisan vendor:publish --tag=mobile-splashscreen-examples
+```
+
+This copies all 8 `.lottie` files into your app's `resources/animations/` directory — exactly where `MOBILE_SPLASHSCREEN_ANIMATION_PATH` expects them. Point your config at any one of them:
+
+```env
+MOBILE_SPLASHSCREEN_ANIMATION_PATH="resources/animations/animation4.lottie"
+```
+
+### Credits & Attribution
+
+**All examples are free animations sourced from [LottieFiles](https://lottiefiles.com).** Full credit goes to their original authors — please support the creators by visiting their work below.
+
+| File | Animation | Author | Source |
+|---|---|---|---|
+| `animation1.lottie` | Businessman flies up with rocket | Abdul Latif | [LottieFiles](https://lottiefiles.com/free-animation/businessman-flies-up-with-rocket-gm3rBUebOt) |
+| `animation2.lottie` | Christmas Tree Animation | Jack Ingall | [LottieFiles](https://lottiefiles.com/free-animation/christmas-tree-animation-1699891737968-dWk2wN8DIC) |
+| `animation3.lottie` | Unbelievable Black Friday Deals Await! Don't Miss Out | WeTech Digital | [LottieFiles](https://lottiefiles.com/free-animation/unbelievable-black-friday-deals-await-don-t-miss-out-7cvC6f6EJn) |
+| `animation4.lottie` | Welcome | Musa Adanur | [LottieFiles](https://lottiefiles.com/free-animation/welcome-5KVcrYEopi) |
+| `animation5.lottie` | Loading | vinay kurve | [LottieFiles](https://lottiefiles.com/free-animation/loading-sp5ya2LLZC) |
+| `animation6.lottie` | Food | Saqlain Ali | [LottieFiles](https://lottiefiles.com/free-animation/food-WVtBsP6qeZ) |
+| `animation7.lottie` | Solar Powered House | Jeffrey Christopher | [LottieFiles](https://lottiefiles.com/free-animation/solar-powered-house-0JlvGde4Vj) |
+| `animation8.lottie` | Apple Image Playground Animation | Mau Ali | [LottieFiles](https://lottiefiles.com/free-animation/apple-image-playground-animation-RtmnkadqSI) |
+
+> These animations are provided purely as starting examples. You're free to use them, but for production apps consider browsing [LottieFiles](https://lottiefiles.com) for an animation that fits your brand.
+
+---
+
 ## How It Works
 
 The plugin hooks into NativePHP's build pipeline at two stages:

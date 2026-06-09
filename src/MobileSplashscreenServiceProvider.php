@@ -31,6 +31,10 @@ class MobileSplashscreenServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__.'/../config/mobile-splashscreen.php' => config_path('mobile-splashscreen.php'),
             ], 'mobile-splashscreen-config');
+
+            $this->publishes([
+                __DIR__.'/../resources/animations' => base_path('resources/animations'),
+            ], 'mobile-splashscreen-examples');
         }
     }
 }
