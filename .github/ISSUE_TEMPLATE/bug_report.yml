@@ -1,0 +1,55 @@
+name: 🐞 Bug report
+description: Report something that isn't working as documented
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for the report! Please include enough detail to reproduce the issue.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the bug and what you expected instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Include the relevant parts of your config / `.env` and how you build.
+      placeholder: |
+        1. Set MOBILE_SPLASHSCREEN_… = …
+        2. Run php artisan native:run
+        3. See …
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      multiple: true
+      options:
+        - iOS
+        - Android
+    validations:
+      required: true
+
+  - type: input
+    id: versions
+    attributes:
+      label: Plugin & NativePHP versions
+      placeholder: "plugin v1.2.0, NativePHP Mobile v3.x"
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Logs / screenshots
+      description: Build output, error messages, or a screen recording if relevant.
+    validations:
+      required: false

@@ -1,0 +1,57 @@
+name: 💡 Feature request
+description: Suggest a concrete feature or improvement for the plugin
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve **NativePHP Mobile Splashscreen**! 🎉
+        For open-ended ideas or "wouldn't it be cool if…" discussions, consider the
+        [Ideas board](../discussions/categories/ideas) instead — it supports voting.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem are you trying to solve?
+      description: What are you trying to achieve, and where does the plugin fall short today?
+      placeholder: "I'm building a splash for… and I can't currently…"
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Describe the feature you'd like
+      description: What should it do? A new config option, a transition, an event, etc.
+      placeholder: "Add a … option that …"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platforms
+    attributes:
+      label: Which platforms does this apply to?
+      multiple: true
+      options:
+        - iOS
+        - Android
+        - Both
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you've considered
+      description: Any workarounds you're using today, or other approaches you weighed.
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Anything else?
+      description: Mockups, example animations, links, or use-case details that help.
+    validations:
+      required: false

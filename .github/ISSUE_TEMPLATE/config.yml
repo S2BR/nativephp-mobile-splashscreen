@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💡 Share an idea / request a feature (with voting)
+    url: https://github.com/S2BR/nativephp-mobile-splashscreen/discussions/categories/ideas
+    about: For open-ended ideas and feature suggestions the community can upvote.
+  - name: 🙋 Ask a question
+    url: https://github.com/S2BR/nativephp-mobile-splashscreen/discussions/categories/q-a
+    about: For setup help and usage questions.
