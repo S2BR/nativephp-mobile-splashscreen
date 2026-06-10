@@ -4,6 +4,18 @@ All notable changes to `nativephp-mobile-splashscreen` are documented in this fi
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.2.0 - 2026-06-10
+
+### Added
+- Progress bar fill direction — set `ltr` (default, fills left→right) or `rtl` (fills right→left) via the new `MOBILE_SPLASHSCREEN_PROGRESS_BAR_DIRECTION` env variable / `progress_bar.direction` config key
+- `progress_bar_direction` is overridable per entry in both the static (build-time) and dynamic (remote) schedules
+- Validation of the progress bar direction value via `MobileSplashscreen::validate()`
+
+### Fixed
+- Dynamic remote schedule now passes through `progress_bar` and `progress_bar_color` per-entry overrides — previously documented as supported but dropped during sync
+
+**Full Changelog**: https://github.com/S2BR/nativephp-mobile-splashscreen/compare/v1.1.0...v1.2.0
+
 ## v1.1.0 - 2026-06-08
 
 ### Added

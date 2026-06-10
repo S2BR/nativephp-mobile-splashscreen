@@ -188,13 +188,18 @@ return [
     |
     | Only relevant when loop = false (single-run animations).
     |
-    | enabled - true shows the bar; false (default) hides it entirely.
+    | enabled   - true shows the bar; false (default) hides it entirely.
+    |
+    | direction - Fill direction of the bar.
+    |             'ltr' (default) fills from left to right.
+    |             'rtl' fills from right to left.
     |
     */
 
     'progress_bar' => [
         'enabled' => (bool) env('MOBILE_SPLASHSCREEN_PROGRESS_BAR', false),
         'color' => env('MOBILE_SPLASHSCREEN_PROGRESS_BAR_COLOR', '#FFFFFF'),
+        'direction' => env('MOBILE_SPLASHSCREEN_PROGRESS_BAR_DIRECTION', 'ltr'),
     ],
 
     /*

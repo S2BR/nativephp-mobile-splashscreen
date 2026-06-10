@@ -50,6 +50,11 @@ class MobileSplashscreen
             }
         }
 
+        $progressBarDirection = $this->config('progress_bar.direction');
+        if (! in_array($progressBarDirection, ['ltr', 'rtl'])) {
+            $errors[] = "Invalid progress bar direction '{$progressBarDirection}'. Must be 'ltr' or 'rtl'.";
+        }
+
         return $errors;
     }
 
@@ -132,6 +137,7 @@ class MobileSplashscreen
                 'delay_before', 'fade_in', 'delay_after',
                 'on_complete', 'on_loop',
                 'show_icon', 'icon_size', 'icon_position', 'icon_radius',
+                'progress_bar', 'progress_bar_color', 'progress_bar_direction',
             ];
             foreach ($passThrough as $field) {
                 if (isset($entry[$field])) {

@@ -14,6 +14,7 @@ trait GeneratesAndroidCode
         $progressBarEnabled = $config['progress_bar']['enabled'] ?? false;
         $progressBarColor = $this->hexToComposeColor($config['progress_bar']['color'] ?? '#FFFFFF');
         $kotlinProgressBarDefault = $progressBarEnabled ? 'true' : 'false';
+        $progressBarDirection = ($config['progress_bar']['direction'] ?? 'ltr') === 'rtl' ? 'rtl' : 'ltr';
         $isGradient = ($config['background']['type'] ?? 'color') === 'gradient';
         $isDiagonal = $isGradient && ($config['background']['gradient']['direction'] ?? 'vertical') === 'diagonal';
         $fadeIn = (int) ($config['timing']['fade_in'] ?? 600);
@@ -152,6 +153,9 @@ trait GeneratesAndroidCode
         $lines[] = '            val hex = (dynamicConfig?.get("progress_bar_color") as? String)'.($hasSchedule ? ' ?: (staticEntry?.get("progress_bar_color") as? String)' : '');
         $lines[] = '            if (hex != null) Color(android.graphics.Color.parseColor(hex)) else '.$progressBarColor;
         $lines[] = '        }';
+        $se = $hasSchedule ? ' ?: (staticEntry?.get("progress_bar_direction") as? String)' : '';
+        $lines[] = '        val resolvedProgressBarDirection = (dynamicConfig?.get("progress_bar_direction") as? String)'.$se.' ?: "'.$progressBarDirection.'"';
+        $lines[] = '        val resolvedProgressBarAlignment = if (resolvedProgressBarDirection == "rtl") Alignment.CenterEnd else Alignment.CenterStart';
         $posExpr = $hasSchedule
             ? '(dynamicConfig?.get("position") as? String) ?: (staticEntry?.get("position") as? String) ?: "'.addslashes($position).'"'
             : '(dynamicConfig?.get("position") as? String) ?: "'.addslashes($position).'"';
@@ -454,7 +458,8 @@ trait GeneratesAndroidCode
         $lines[] = '                        .align(Alignment.BottomCenter)';
         $lines[] = '                        .offset(y = (-48).dp)';
         $lines[] = '                        .fillMaxWidth(0.5f)';
-        $lines[] = '                        .height(3.dp)';
+        $lines[] = '                        .height(3.dp),';
+        $lines[] = '                    contentAlignment = resolvedProgressBarAlignment';
         $lines[] = '                ) {';
         $lines[] = '                    Box(';
         $lines[] = '                        modifier = Modifier';
@@ -515,7 +520,7 @@ trait GeneratesAndroidCode
             'loop', 'size', 'position', 'transition_out', 'transition_duration',
             'transition_origin', 'delay_before', 'fade_in', 'delay_after',
             'on_complete', 'on_loop', 'show_icon', 'icon_size', 'icon_position', 'icon_radius',
-            'progress_bar', 'progress_bar_color',
+            'progress_bar', 'progress_bar_color', 'progress_bar_direction',
         ];
 
         foreach ($schedule as $entry) {

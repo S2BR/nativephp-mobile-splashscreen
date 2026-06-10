@@ -146,6 +146,7 @@ trait GeneratesIosCode
         $lines[] = '';
         $progressBarColor = $this->hexToSwiftColor($config['progress_bar']['color'] ?? '#FFFFFF');
         $swiftProgressBarDefault = $progressBarEnabled ? 'true' : 'false';
+        $progressBarDirection = ($config['progress_bar']['direction'] ?? 'ltr') === 'rtl' ? 'rtl' : 'ltr';
 
         // ── Per-entry resolved properties ─────────────────────────────────────
         // Priority: dynamic (runtime schedule) → staticEntry (build-time schedule) → config default
@@ -215,6 +216,9 @@ trait GeneratesIosCode
         }
         $lines[] = '        return '.$progressBarColor;
         $lines[] = '    }';
+        $s = $hasSchedule ? ' ?? Self.staticEntry?["progress_bar_direction"] as? String' : '';
+        $lines[] = '    private var resolvedProgressBarDirection: String { (Self.dynamic?["progress_bar_direction"] as? String'.$s.') ?? "'.$progressBarDirection.'" }';
+        $lines[] = '    private var resolvedProgressBarAlignment: Alignment { resolvedProgressBarDirection == "rtl" ? .trailing : .leading }';
         $lines[] = '';
 
         // ── resolvedAlignmentValue ─────────────────────────────────────────────
@@ -428,7 +432,7 @@ trait GeneratesIosCode
         $lines[] = '                if showProgressBar {';
         $lines[] = '                    VStack {';
         $lines[] = '                        Spacer()';
-        $lines[] = '                        ZStack(alignment: .leading) {';
+        $lines[] = '                        ZStack(alignment: resolvedProgressBarAlignment) {';
         $lines[] = '                            Capsule()';
         $lines[] = '                                .fill(resolvedProgressBarColor.opacity(0.15))';
         $lines[] = '                                .frame(width: geometry.size.width * 0.5, height: 3)';
@@ -570,7 +574,7 @@ trait GeneratesIosCode
             'loop', 'size', 'position', 'transition_out', 'transition_duration',
             'transition_origin', 'delay_before', 'fade_in', 'delay_after',
             'on_complete', 'on_loop', 'show_icon', 'icon_size', 'icon_position', 'icon_radius',
-            'progress_bar', 'progress_bar_color',
+            'progress_bar', 'progress_bar_color', 'progress_bar_direction',
         ];
 
         foreach ($schedule as $entry) {

@@ -219,15 +219,19 @@ Displays a subtle loading indicator while a single-run animation (`loop = false`
 |---|---|---|
 | `MOBILE_SPLASHSCREEN_PROGRESS_BAR` | `false` | Show the progress bar |
 | `MOBILE_SPLASHSCREEN_PROGRESS_BAR_COLOR` | `#FFFFFF` | Bar color (track at 15% opacity, fill at 60% opacity) |
+| `MOBILE_SPLASHSCREEN_PROGRESS_BAR_DIRECTION` | `ltr` | Fill direction: `ltr` fills left→right, `rtl` fills right→left |
 
 The bar is centered, takes ~50% of the screen width, is 3dp/pt tall with rounded ends, and exits as part of the splash transition — for `circle_expand` it gets swept away by the expanding circle; for fade/slide/scale it exits with everything else.
 
-`MOBILE_SPLASHSCREEN_PROGRESS_BAR` sets the **default** — it can always be overridden per entry in the dynamic or static schedule using `"progress_bar": true/false`. The same applies to `progress_bar_color`.
+Use `rtl` for right-to-left locales (Arabic, Hebrew, etc.) so the fill progresses in the same direction as the reading flow.
+
+`MOBILE_SPLASHSCREEN_PROGRESS_BAR` sets the **default** — it can always be overridden per entry in the dynamic or static schedule using `"progress_bar": true/false`. The same applies to `progress_bar_color` and `progress_bar_direction`.
 
 ```env
 MOBILE_SPLASHSCREEN_LOOP=false
 MOBILE_SPLASHSCREEN_PROGRESS_BAR=false
 MOBILE_SPLASHSCREEN_PROGRESS_BAR_COLOR="#FFFFFF"
+MOBILE_SPLASHSCREEN_PROGRESS_BAR_DIRECTION=ltr
 ```
 
 ---
@@ -391,6 +395,7 @@ For animations that can be updated without a new app release. The sync command f
 | `icon_radius` | Optional float (0.0–0.5). Overrides `MOBILE_SPLASHSCREEN_ICON_RADIUS`. |
 | `progress_bar` | Optional boolean. Show or hide the progress bar for this entry. Overrides `MOBILE_SPLASHSCREEN_PROGRESS_BAR`. |
 | `progress_bar_color` | Optional hex string. Overrides `MOBILE_SPLASHSCREEN_PROGRESS_BAR_COLOR` for this entry. |
+| `progress_bar_direction` | Optional string (`ltr` / `rtl`). Overrides `MOBILE_SPLASHSCREEN_PROGRESS_BAR_DIRECTION` for this entry. |
 
 Every property is optional — omit any field to inherit the build-time value from your `.env`/config. This means a minimal entry only needs `date`, `url`, and the properties that differ from your defaults.
 
@@ -423,7 +428,8 @@ Every property is optional — omit any field to inherit the build-time value fr
       "icon_position": "bottom",
       "icon_radius": 0.22,
       "progress_bar": true,
-      "progress_bar_color": "#FFFFFF"
+      "progress_bar_color": "#FFFFFF",
+      "progress_bar_direction": "ltr"
     }
   ]
 }
