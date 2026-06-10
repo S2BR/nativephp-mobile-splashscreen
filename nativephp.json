@@ -4,6 +4,7 @@
     "bridge_functions": [],
 
     "android": {
+        "min_version": 26,
         "dependencies": {
             "implementation": [
                 "com.airbnb.android:lottie-compose:6.7.1"
@@ -11,7 +12,9 @@
         }
     },
 
-    "ios": {},
+    "ios": {
+        "min_version": "18.0"
+    },
 
     "events": [
         "S2BR\\MobileSplashscreen\\Events\\SplashscreenCompleted",

@@ -27,3 +27,12 @@ it('declares both hooks in the manifest', function () {
     expect($manifest['hooks'])->toHaveKey('pre_compile');
     expect($manifest['hooks'])->toHaveKey('copy_assets');
 });
+
+it('declares minimum platform versions within the NativePHP v3 supported range', function () {
+    $manifest = json_decode(file_get_contents(__DIR__.'/../nativephp.json'), true);
+
+    // NativePHP Mobile v3: lowest supported Android min_sdk is 26 (Android 8); iOS baseline is 18.0.
+    // This plugin imposes no requirement above those, so it declares the floor to maximise device reach.
+    expect($manifest['android']['min_version'])->toBeGreaterThanOrEqual(26);
+    expect((float) $manifest['ios']['min_version'])->toBeGreaterThanOrEqual(18.0);
+});
