@@ -75,17 +75,7 @@ trait GeneratesAndroidCode
         $lines[] = '                if (!file.exists()) return@remember null';
         $lines[] = '                val root = org.json.JSONObject(file.readText())';
         $lines[] = '                val schedule = root.optJSONArray("schedule") ?: return@remember null';
-        $lines[] = '                val fmt = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US)';
-        $lines[] = '                val today = fmt.format(java.util.Date())';
-        $lines[] = '                for (i in 0 until schedule.length()) {';
-        $lines[] = '                    val entry = schedule.getJSONObject(i)';
-        $lines[] = '                    val from = entry.optString("from", "")';
-        $lines[] = '                    val to = entry.optString("to", "")';
-        $lines[] = '                    if (from.isEmpty() || to.isEmpty()) continue';
-        $lines[] = '                    val inRange = if (from <= to) today >= from && today <= to else today >= from || today <= to';
-        $lines[] = '                    if (inRange) return@remember buildMap { entry.keys().forEach { k -> put(k, entry.get(k)) } }';
-        $lines[] = '                }';
-        $lines[] = '                null';
+        $lines = array_merge($lines, $this->androidScheduleMatchLines());
         $lines[] = '            } catch (e: Exception) { null }';
         $lines[] = '        }';
         $lines[] = '';
@@ -99,18 +89,8 @@ trait GeneratesAndroidCode
             $lines[] = '        val staticEntry: Map<String, Any>? = remember {';
             $lines[] = '            try {';
             $lines[] = '                val json = """'.$json.'"""';
-            $lines[] = '                val arr = org.json.JSONArray(json)';
-            $lines[] = '                val fmt = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US)';
-            $lines[] = '                val today = fmt.format(java.util.Date())';
-            $lines[] = '                for (i in 0 until arr.length()) {';
-            $lines[] = '                    val entry = arr.getJSONObject(i)';
-            $lines[] = '                    val from = entry.optString("from", "")';
-            $lines[] = '                    val to = entry.optString("to", "")';
-            $lines[] = '                    if (from.isEmpty() || to.isEmpty()) continue';
-            $lines[] = '                    val inRange = if (from <= to) today >= from && today <= to else today >= from || today <= to';
-            $lines[] = '                    if (inRange) return@remember buildMap { entry.keys().forEach { k -> put(k, entry.get(k)) } }';
-            $lines[] = '                }';
-            $lines[] = '                null';
+            $lines[] = '                val schedule = org.json.JSONArray(json)';
+            $lines = array_merge($lines, $this->androidScheduleMatchLines());
             $lines[] = '            } catch (e: Exception) { null }';
             $lines[] = '        }';
             $lines[] = '';
@@ -548,6 +528,40 @@ trait GeneratesAndroidCode
         }
 
         return $entries;
+    }
+
+    /**
+     * Kotlin lines that resolve today's matching entry from a `schedule`
+     * JSONArray already in scope; the block's value is the entry map (or null).
+     *
+     * Full dates (YYYY-MM-DD) match only that calendar year; partial dates
+     * (MM-DD) match the same month/day every year. A full-date match always takes
+     * precedence over a partial-date match; within a tier the first entry wins.
+     */
+    protected function androidScheduleMatchLines(): array
+    {
+        return [
+            '                val fmt = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US)',
+            '                val today = fmt.format(java.util.Date())',
+            '                val todayMD = today.substring(5)',
+            '                var fullMatch: Map<String, Any>? = null',
+            '                var partialMatch: Map<String, Any>? = null',
+            '                for (i in 0 until schedule.length()) {',
+            '                    val entry = schedule.getJSONObject(i)',
+            '                    val from = entry.optString("from", "")',
+            '                    val to = entry.optString("to", "")',
+            '                    if (from.isEmpty() || to.isEmpty()) continue',
+            '                    val isFull = from.length == 10 && to.length == 10',
+            '                    val t = if (isFull) today else todayMD',
+            '                    val inRange = if (from <= to) t >= from && t <= to else t >= from || t <= to',
+            '                    if (inRange) {',
+            '                        val map = buildMap<String, Any> { entry.keys().forEach { k -> put(k, entry.get(k)) } }',
+            '                        if (isFull) { fullMatch = map; break }',
+            '                        if (partialMatch == null) partialMatch = map',
+            '                    }',
+            '                }',
+            '                fullMatch ?: partialMatch',
+        ];
     }
 
     protected function androidParseSchedule(array $config): array

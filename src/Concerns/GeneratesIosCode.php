@@ -92,15 +92,7 @@ trait GeneratesIosCode
         $lines[] = '        guard let data = try? Data(contentsOf: url),';
         $lines[] = '              let root = try? JSONSerialization.jsonObject(with: data) as? [String: Any],';
         $lines[] = '              let schedule = root["schedule"] as? [[String: Any]] else { return nil }';
-        $lines[] = '        let formatter = DateFormatter()';
-        $lines[] = '        formatter.dateFormat = "yyyy-MM-dd"';
-        $lines[] = '        let today = formatter.string(from: Date())';
-        $lines[] = '        for entry in schedule {';
-        $lines[] = '            guard let from = entry["from"] as? String, let to = entry["to"] as? String else { continue }';
-        $lines[] = '            let inRange = from <= to ? (today >= from && today <= to) : (today >= from || today <= to)';
-        $lines[] = '            if inRange { return entry }';
-        $lines[] = '        }';
-        $lines[] = '        return nil';
+        $lines = array_merge($lines, $this->iosScheduleMatchLines());
         $lines[] = '    }()';
         $lines[] = '';
 
@@ -114,15 +106,7 @@ trait GeneratesIosCode
             $lines[] = '    private static let staticEntry: [String: Any]? = {';
             $lines[] = '        guard let data = "'.$escapedJson.'".data(using: .utf8),';
             $lines[] = '              let schedule = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]] else { return nil }';
-            $lines[] = '        let formatter = DateFormatter()';
-            $lines[] = '        formatter.dateFormat = "yyyy-MM-dd"';
-            $lines[] = '        let today = formatter.string(from: Date())';
-            $lines[] = '        for entry in schedule {';
-            $lines[] = '            guard let from = entry["from"] as? String, let to = entry["to"] as? String else { continue }';
-            $lines[] = '            let inRange = from <= to ? (today >= from && today <= to) : (today >= from || today <= to)';
-            $lines[] = '            if inRange { return entry }';
-            $lines[] = '        }';
-            $lines[] = '        return nil';
+            $lines = array_merge($lines, $this->iosScheduleMatchLines());
             $lines[] = '    }()';
             $lines[] = '';
         }
@@ -622,6 +606,37 @@ trait GeneratesIosCode
         return [
             'type' => 'color',
             'color' => $bg['color'] ?? '#FFFFFF',
+        ];
+    }
+
+    /**
+     * Swift lines that resolve today's matching entry from a `schedule` array
+     * already in scope, returning the entry (or nil).
+     *
+     * Full dates (YYYY-MM-DD) match only that calendar year; partial dates
+     * (MM-DD) match the same month/day every year. A full-date match always takes
+     * precedence over a partial-date match; within a tier the first entry wins.
+     */
+    protected function iosScheduleMatchLines(): array
+    {
+        return [
+            '        let formatter = DateFormatter()',
+            '        formatter.dateFormat = "yyyy-MM-dd"',
+            '        let today = formatter.string(from: Date())',
+            '        let todayMD = String(today.suffix(5))',
+            '        var fullMatch: [String: Any]? = nil',
+            '        var partialMatch: [String: Any]? = nil',
+            '        for entry in schedule {',
+            '            guard let from = entry["from"] as? String, let to = entry["to"] as? String, !from.isEmpty, !to.isEmpty else { continue }',
+            '            let isFull = from.count == 10 && to.count == 10',
+            '            let t = isFull ? today : todayMD',
+            '            let inRange = from <= to ? (t >= from && t <= to) : (t >= from || t <= to)',
+            '            if inRange {',
+            '                if isFull { fullMatch = entry; break }',
+            '                if partialMatch == nil { partialMatch = entry }',
+            '            }',
+            '        }',
+            '        return fullMatch ?? partialMatch',
         ];
     }
 

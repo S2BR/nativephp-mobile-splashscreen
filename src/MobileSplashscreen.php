@@ -115,7 +115,7 @@ class MobileSplashscreen
             }
 
             $isActive = $this->isDateInRange($todayStr, $from, $to);
-            $startsWithinWindow = $from > $todayStr && $from <= $cutoff;
+            $startsWithinWindow = $this->startsWithinWindow($todayStr, $from, $cutoff);
 
             if (! $isActive && ! $startsWithinWindow) {
                 continue;
@@ -234,11 +234,42 @@ class MobileSplashscreen
             return false;
         }
 
+        // Full YYYY-MM-DD dates match only their specific year; partial MM-DD dates
+        // recur every year, so they are compared against today's month-day only.
+        $isFull = strlen($from) === 10 && strlen($to) === 10;
+        $value = $isFull ? $today : substr($today, 5);
+
         if ($from <= $to) {
-            return $today >= $from && $today <= $to;
+            return $value >= $from && $value <= $to;
         }
 
-        // Spans year boundary
-        return $today >= $from || $today <= $to;
+        // Spans the year boundary (e.g. 12-31 → 01-02).
+        return $value >= $from || $value <= $to;
+    }
+
+    /**
+     * Whether an entry's start falls within the pre-download window
+     * (after today, on or before the cutoff).
+     *
+     * Full YYYY-MM-DD dates are compared directly. Partial MM-DD dates resolve to
+     * their next yearly occurrence so recurring seasons are fetched ahead of time.
+     */
+    protected function startsWithinWindow(string $today, string $from, string $cutoff): bool
+    {
+        if ($from === '') {
+            return false;
+        }
+
+        if (strlen($from) === 10) {
+            return $from > $today && $from <= $cutoff;
+        }
+
+        $year = (int) substr($today, 0, 4);
+        $next = $year.'-'.$from;
+        if ($next < $today) {
+            $next = ($year + 1).'-'.$from;
+        }
+
+        return $next > $today && $next <= $cutoff;
     }
 }

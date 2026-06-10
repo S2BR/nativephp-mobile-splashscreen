@@ -269,8 +269,13 @@ return [
     |     ]
     |   }
     |
-    | Date format: MM-DD. Ranges spanning the year boundary (e.g. 12-31→01-01)
-    | are handled correctly. The 'background' key is optional per entry.
+    | Date format — two styles, mix freely:
+    |   - "MM-DD"      (e.g. "12-24"): recurs every year. Use for seasons.
+    |   - "YYYY-MM-DD" (e.g. "2026-12-24"): matches only that specific year.
+    | Ranges spanning the year boundary (e.g. 12-31→01-02) are handled correctly.
+    | When a full-date entry and a recurring entry both match today, the full date
+    | wins — so you can override a season for one particular year.
+    | The 'background' key is optional per entry.
     |
     | Priority at runtime: schedule > dark-mode override > default.
     |

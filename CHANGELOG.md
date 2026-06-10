@@ -10,9 +10,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and 
 - Progress bar fill direction — set `ltr` (default, fills left→right) or `rtl` (fills right→left) via the new `MOBILE_SPLASHSCREEN_PROGRESS_BAR_DIRECTION` env variable / `progress_bar.direction` config key
 - `progress_bar_direction` is overridable per entry in both the static (build-time) and dynamic (remote) schedules
 - Validation of the progress bar direction value via `MobileSplashscreen::validate()`
+- Recurring schedule dates — schedule entries now accept `MM-DD` (recurs every year) in addition to `YYYY-MM-DD` (specific year). When both a full-date and a recurring entry match the same day, the full date takes precedence. Works for both static and dynamic schedules
+- `min_version` declared in `nativephp.json` — Android 26 (Android 8) and iOS 18.0, matching the NativePHP v3 supported range
+
+### Changed
+- Plugin registration docs now lead with the `php artisan native:plugin:register` command (manual `NativeServiceProvider` editing kept as an alternative)
 
 ### Fixed
 - Dynamic remote schedule now passes through `progress_bar` and `progress_bar_color` per-entry overrides — previously documented as supported but dropped during sync
+- Static schedule `MM-DD` dates were documented but never matched (the on-device matcher compared them against a full `YYYY-MM-DD` date); recurring dates now work as intended
 
 **Full Changelog**: https://github.com/S2BR/nativephp-mobile-splashscreen/compare/v1.1.0...v1.2.0
 

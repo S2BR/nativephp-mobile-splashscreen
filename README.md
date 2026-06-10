@@ -322,8 +322,8 @@ MOBILE_SPLASHSCREEN_SCHEDULE="resources/splash-schedule.json"
   "schedule": [
     {
       "name": "christmas",
-      "from": "2024-12-24",
-      "to": "2024-12-26",
+      "from": "12-24",
+      "to": "12-26",
       "animation": "resources/animations/christmas.lottie",
       "background": {
         "type": "gradient",
@@ -333,19 +333,33 @@ MOBILE_SPLASHSCREEN_SCHEDULE="resources/splash-schedule.json"
     },
     {
       "name": "new_year",
-      "from": "2024-12-31",
-      "to": "2025-01-01",
+      "from": "12-31",
+      "to": "01-02",
       "animation": "resources/animations/fireworks.lottie"
+    },
+    {
+      "name": "christmas_2026_special",
+      "from": "2026-12-24",
+      "to": "2026-12-26",
+      "animation": "resources/animations/christmas_anniversary.lottie"
     }
   ]
 }
 ```
 
-- `from` / `to`: `YYYY-MM-DD` format. Ranges that span a year boundary are handled correctly.
+**Date format — two styles, mix freely:**
+
+| Format | Example | Behavior |
+|---|---|---|
+| `MM-DD` | `"12-24"` | **Recurs every year** on that month/day. Use this for seasons. |
+| `YYYY-MM-DD` | `"2026-12-24"` | Matches **only that specific year**. Use for one-off dated events. |
+
+- Ranges that span the year boundary (e.g. `12-31` → `01-02`) are handled correctly in both formats.
+- **Precedence:** when a full-date entry and a recurring entry both match today, the **full date wins** — so the `christmas_2026_special` entry above replaces the recurring `christmas` animation in 2026 only, then it reverts automatically.
 - Every per-entry property listed in the dynamic schedule table (`loop`, `size`, `transition_out`, `background`, etc.) works here too. The entries are embedded in the binary as JSON and resolved on-device at launch — same mechanism, just baked in at build time instead of downloaded.
 - All referenced animation files are automatically deployed at build time.
 
-**Priority at runtime:** dynamic schedule-local → build-time schedule entry → dark mode override → default.
+**Priority at runtime:** dynamic schedule-local → build-time schedule entry → dark mode override → default. Within a schedule, a full-date match beats a recurring `MM-DD` match.
 
 ---
 
@@ -391,7 +405,7 @@ For animations that can be updated without a new app release. The sync command f
 
 | Field | Description |
 |---|---|
-| `date.from` / `date.to` | Date range in `YYYY-MM-DD` format. Year-boundary ranges work correctly. |
+| `date.from` / `date.to` | Date range. Use `YYYY-MM-DD` for a specific year, or `MM-DD` to recur every year. Year-boundary ranges work correctly; a full-date match takes precedence over a recurring `MM-DD` match. |
 | `url` | URL to download the `.lottie` file from. |
 | `background` | Optional. `type: "gradient"` with a `colors` array, or `type: "color"` with a `color` hex. Overrides the build-time background for this entry. |
 | `loop` | Optional boolean. Overrides `MOBILE_SPLASHSCREEN_LOOP` for this entry. |
