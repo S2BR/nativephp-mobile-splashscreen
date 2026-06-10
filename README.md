@@ -37,18 +37,34 @@ Publish the config:
 php artisan vendor:publish --tag=mobile-splashscreen-config
 ```
 
-Register the plugin in `app/Providers/NativeServiceProvider.php`:
+Register the plugin so its native code gets compiled into your app. For security, NativePHP requires plugins to be explicitly registered — use the built-in command (recommended):
 
-```php
-use S2BR\MobileSplashscreen\MobileSplashscreenServiceProvider;
+```bash
+# Publish the NativeServiceProvider if you haven't already
+php artisan vendor:publish --tag=nativephp-plugins-provider
 
-public function plugins(): array
-{
-    return [
-        MobileSplashscreenServiceProvider::class,
-    ];
-}
+# Register this plugin (pass the Composer package name)
+php artisan native:plugin:register s2br/nativephp-mobile-splashscreen
 ```
+
+Verify it was picked up:
+
+```bash
+php artisan native:plugin:list
+```
+
+> **Prefer to do it by hand?** The command simply adds the plugin to the `plugins()` method in `app/Providers/NativeServiceProvider.php`. You can edit that file directly instead:
+>
+> ```php
+> use S2BR\MobileSplashscreen\MobileSplashscreenServiceProvider;
+>
+> public function plugins(): array
+> {
+>     return [
+>         MobileSplashscreenServiceProvider::class,
+>     ];
+> }
+> ```
 
 Configure in `.env`:
 
@@ -721,7 +737,11 @@ Ensure the schedule JSON path is correct and all referenced `.lottie` files exis
 
 ### Build hook not running
 
-Ensure the plugin is registered in `app/Providers/NativeServiceProvider.php`:
+Ensure the plugin is registered. Run `php artisan native:plugin:list` — if it isn't listed, register it with:
+```bash
+php artisan native:plugin:register s2br/nativephp-mobile-splashscreen
+```
+This adds the plugin to the `plugins()` method in `app/Providers/NativeServiceProvider.php` (which you can also edit by hand):
 ```php
 public function plugins(): array
 {
