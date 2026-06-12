@@ -13,7 +13,15 @@
     },
 
     "ios": {
-        "min_version": "18.0"
+        "min_version": "18.0",
+        "dependencies": {
+            "swift_packages": [
+                {
+                    "url": "https://github.com/airbnb/lottie-spm.git",
+                    "version": "4.6.0"
+                }
+            ]
+        }
     },
 
     "events": [

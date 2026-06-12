@@ -4,6 +4,13 @@ All notable changes to `nativephp-mobile-splashscreen` are documented in this fi
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.2.1 - 2026-06-12
+
+### Fixed
+- iOS builds failed with `Unable to find module dependency: 'Lottie'` because the `lottie-spm` Swift package was never declared — the generated `SplashView.swift` imports `Lottie`, so the build only succeeded when the package already happened to be present in the Xcode project. It is now declared in `nativephp.json` and added on every build.
+
+**Full Changelog**: https://github.com/S2BR/nativephp-mobile-splashscreen/compare/v1.2.0...v1.2.1
+
 ## v1.2.0 - 2026-06-10
 
 ### Added
