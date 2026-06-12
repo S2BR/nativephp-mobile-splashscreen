@@ -658,7 +658,11 @@ trait GeneratesAndroidCode
             };
         }
 
-        return $this->hexToComposeColor($bg['color'] ?? '#FFFFFF');
+        // Wrap solid colors in SolidColor so this always yields a Brush. The
+        // background block mixes this with Brush branches (gradient / dynamic
+        // SolidColor); returning a bare Color there makes Modifier.background()
+        // match no overload and fails to compile.
+        return 'SolidColor('.$this->hexToComposeColor($bg['color'] ?? '#FFFFFF').')';
     }
 
     protected function androidBackgroundModifier(array $bg, bool $isDiagonal): array

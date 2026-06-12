@@ -4,6 +4,13 @@ All notable changes to `nativephp-mobile-splashscreen` are documented in this fi
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.2.3 - 2026-06-12
+
+### Fixed
+- Android failed to compile (`Modifier.background`: none of the candidates is applicable) when the background was a **solid color**. The generated background block returns a `Brush` in its gradient/dynamic branches but fell back to a bare `Color`, which `Modifier.background()` can't reconcile. Solid colors are now wrapped in `SolidColor`, so the block is consistently a `Brush`. Gradient backgrounds were unaffected — which is why it only surfaced with a solid color.
+
+**Full Changelog**: https://github.com/S2BR/nativephp-mobile-splashscreen/compare/v1.2.2...v1.2.3
+
 ## v1.2.2 - 2026-06-12
 
 ### Fixed
