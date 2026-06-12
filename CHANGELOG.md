@@ -4,6 +4,13 @@ All notable changes to `nativephp-mobile-splashscreen` are documented in this fi
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.2.2 - 2026-06-12
+
+### Fixed
+- iOS build failed to link Lottie (`Missing package product`) because the Swift package's product name wasn't specified, so it was guessed from the URL. The `lottie-spm` library product (`Lottie`) is now declared explicitly so it links correctly. Completes the v1.2.1 fix.
+
+**Full Changelog**: https://github.com/S2BR/nativephp-mobile-splashscreen/compare/v1.2.1...v1.2.2
+
 ## v1.2.1 - 2026-06-12
 
 ### Fixed
