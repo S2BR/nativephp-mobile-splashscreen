@@ -12,6 +12,12 @@ class CopyAssetsCommand extends NativePluginHookCommand
 
     public function handle(): int
     {
+        if (! config('mobile-splashscreen.enabled', true)) {
+            $this->info('MobileSplashscreen disabled — skipping animation assets.');
+
+            return self::SUCCESS;
+        }
+
         $paths = $this->resolveAllAnimationPaths();
 
         if (empty($paths)) {

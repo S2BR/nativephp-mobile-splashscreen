@@ -4,6 +4,13 @@ All notable changes to `nativephp-mobile-splashscreen` are documented in this fi
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.3.0 - 2026-06-14
+
+### Added
+- `enabled` master switch (`MOBILE_SPLASHSCREEN_ENABLED`, default `true`). Set it to `false` to turn the custom splash off entirely: the plugin reverts its native changes on both iOS and Android (restoring NativePHP's default `SplashScreen`/`SplashView` and undoing its `MainActivity`/`AppState` patches) so the app falls back to NativePHP's default splash. Toggling it back on restores the custom splash. The native OS launch screen is unavoidable, so `launch_color` is still applied to it when set, letting that flash match your brand even with the custom splash disabled.
+
+**Full Changelog**: https://github.com/S2BR/nativephp-mobile-splashscreen/compare/v1.2.3...v1.3.0
+
 ## v1.2.3 - 2026-06-12
 
 ### Fixed

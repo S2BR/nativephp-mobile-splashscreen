@@ -80,6 +80,24 @@ MOBILE_SPLASHSCREEN_LOOP=false
 
 ---
 
+## Enabling / Disabling
+
+The splash screen is on by default. To turn it off entirely:
+
+```env
+MOBILE_SPLASHSCREEN_ENABLED=false
+```
+
+When disabled, this plugin injects nothing — the app falls back to **NativePHP's default splash handling** (no animation, background, progress bar, or transitions from this package). Rebuild for the change to take effect.
+
+> The OS always shows its own native launch screen for a moment at cold start (iOS `LaunchScreen.storyboard`, Android's themed window) — that can't be removed. If you set `launch_color`, it is still applied to that screen even when the splash is disabled, so it can match your brand:
+>
+> ```env
+> MOBILE_SPLASHSCREEN_LAUNCH_COLOR="#079F3D"
+> ```
+
+---
+
 ## Bundled Example Animations
 
 To help you get started, this package ships with **8 ready-to-use Lottie animations**. They live in the package's `resources/animations/` directory and can be published straight into your app:

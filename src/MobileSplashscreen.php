@@ -17,6 +17,11 @@ class MobileSplashscreen
 
     public function validate(): array
     {
+        // Nothing to validate when the custom splash is turned off.
+        if (! ($this->config('enabled') ?? true)) {
+            return [];
+        }
+
         $errors = [];
 
         $content = $this->config('content');

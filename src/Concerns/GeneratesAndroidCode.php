@@ -747,4 +747,41 @@ trait GeneratesAndroidCode
 
         return '#'.$hex;
     }
+
+    /**
+     * Reverse the splashscreen's MainActivity edits, returning NativePHP's
+     * default. Pure (no IO) so it is unit-testable. $templateContent supplies the
+     * default SplashScreen() composable; pass '' to skip the composable swap.
+     */
+    protected function revertAndroidMainActivity(string $content, string $templateContent): string
+    {
+        // Reverse patchAndroidMainActivity() (idempotent — no-op if already default).
+        $content = str_replace(
+            "private var showSplash by mutableStateOf(true)\n    private var webViewReadyForSplash by mutableStateOf(false)",
+            'private var showSplash by mutableStateOf(true)',
+            $content
+        );
+        $content = str_replace(
+            "// Signal WebView ready — SplashScreen() will play its transition then hide\n            webViewReadyForSplash = true",
+            "// Hide splash screen after URL is loaded\n            showSplash = false",
+            $content
+        );
+        $content = str_replace(
+            'exit = fadeOut(animationSpec = tween(0))',
+            'exit = fadeOut(animationSpec = tween(300))',
+            $content
+        );
+
+        // Swap our custom SplashScreen() composable back to NativePHP's default
+        // one. str_replace keeps it literal so Kotlin `$`/`\` are not treated as
+        // regex backreferences.
+        $pattern = '/@Composable\s+private fun SplashScreen\(\).*?^    \}/ms';
+        if ($templateContent !== ''
+            && preg_match($pattern, $content, $current)
+            && preg_match($pattern, $templateContent, $default)) {
+            $content = str_replace($current[0], $default[0], $content);
+        }
+
+        return $content;
+    }
 }

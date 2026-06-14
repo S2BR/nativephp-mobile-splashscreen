@@ -4,6 +4,23 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Enabled
+    |--------------------------------------------------------------------------
+    |
+    | Master switch for the custom splash screen. When false, this plugin
+    | injects nothing and the app falls back to NativePHP's default splash
+    | handling — no animation, background, or progress bar from this package.
+    |
+    | The OS still shows its native launch screen briefly at cold start (that
+    | cannot be removed); if 'launch_color' is set it is still applied so that
+    | screen can match your brand even when the custom splash is disabled.
+    |
+    */
+
+    'enabled' => (bool) env('MOBILE_SPLASHSCREEN_ENABLED', true),
+
+    /*
+    |--------------------------------------------------------------------------
     | Content Type
     |--------------------------------------------------------------------------
     |

@@ -19,6 +19,10 @@ class PreCompileCommand extends NativePluginHookCommand
     {
         $config = config('mobile-splashscreen');
 
+        if (! ($config['enabled'] ?? true)) {
+            return $this->handleDisabled($config);
+        }
+
         foreach (app(MobileSplashscreen::class)->validate() as $error) {
             $this->warn($error);
         }
@@ -41,6 +45,97 @@ class PreCompileCommand extends NativePluginHookCommand
         $this->configureCleanupExclusions();
 
         return self::SUCCESS;
+    }
+
+    /**
+     * Disabled mode: inject no custom splash so the app uses NativePHP's default.
+     * Only the native launch-screen color is applied, and only when explicitly
+     * set via 'launch_color' (the OS launch screen is unavoidable, so this lets
+     * it still match the brand).
+     */
+    protected function handleDisabled(array $config): int
+    {
+        $this->info('MobileSplashscreen disabled — restoring NativePHP default splash.');
+
+        if ($this->isIos()) {
+            $this->restoreIosDefaultSplash();
+            if (! empty($config['launch_color'])) {
+                $this->modifyLaunchScreen($config);
+            }
+        }
+
+        if ($this->isAndroid()) {
+            $this->restoreAndroidDefaultSplash();
+            if (! empty($config['launch_color'])) {
+                $this->modifyAndroidTheme($config);
+            }
+        }
+
+        return self::SUCCESS;
+    }
+
+    /**
+     * Undo the Android splash injection so the app uses NativePHP's default
+     * splash. The build dir is persistent, so a previous (enabled) build leaves
+     * the custom SplashScreen() composable and MainActivity patches in place;
+     * this reverses exactly those changes without touching anything else.
+     */
+    protected function restoreAndroidDefaultSplash(): void
+    {
+        $path = $this->buildPath().'/app/src/main/java/com/nativephp/mobile/ui/MainActivity.kt';
+        if (! file_exists($path)) {
+            return;
+        }
+
+        $template = base_path('vendor/nativephp/mobile/resources/androidstudio/app/src/main/java/com/nativephp/mobile/ui/MainActivity.kt');
+        $templateContent = file_exists($template) ? file_get_contents($template) : '';
+
+        file_put_contents($path, $this->revertAndroidMainActivity(file_get_contents($path), $templateContent));
+
+        // Drop the splash background colors from the themes, restoring the originals.
+        $backupDir = $this->buildPath().'/app/src/main/nativephp-backups';
+        foreach (['values/themes.xml' => 'themes.xml.original', 'values-v31/themes.xml' => 'themes-v31.xml.original'] as $rel => $backup) {
+            $original = $backupDir.'/'.$backup;
+            $dest = $this->buildPath().'/app/src/main/res/'.$rel;
+            if (file_exists($original) && file_exists($dest)) {
+                copy($original, $dest);
+            }
+        }
+
+        $this->info('Android: restored NativePHP default splash (plugin disabled).');
+    }
+
+    /**
+     * Undo the iOS splash injection (AppState / NativePHPApp patches and the
+     * custom SplashView) so the app falls back to NativePHP's default.
+     */
+    protected function restoreIosDefaultSplash(): void
+    {
+        $appState = $this->buildPath().'/NativePHP/AppState.swift';
+        if (file_exists($appState)) {
+            $content = str_replace(
+                "@Published var isInitialized = false\n\n    /// Splash transition complete — set by SplashView after its custom exit animation\n    @Published var isSplashDismissed = false",
+                '@Published var isInitialized = false',
+                file_get_contents($appState)
+            );
+            file_put_contents($appState, $content);
+        }
+
+        $appFile = $this->buildPath().'/NativePHP/NativePHPApp.swift';
+        if (file_exists($appFile)) {
+            $content = file_get_contents($appFile);
+            $content = str_replace('!appState.isSplashDismissed', '!appState.isInitialized', $content);
+            $content = str_replace('value: appState.isSplashDismissed', 'value: appState.isInitialized', $content);
+            file_put_contents($appFile, $content);
+        }
+
+        $splashView = $this->buildPath().'/NativePHP/SplashView.swift';
+        $template = base_path('vendor/nativephp/mobile/resources/xcode/NativePHP/SplashView.swift');
+        if (file_exists($splashView) && file_exists($template)) {
+            copy($template, $splashView);
+        }
+
+        $this->info('iOS: restored NativePHP default splash (plugin disabled).');
     }
 
     /**
