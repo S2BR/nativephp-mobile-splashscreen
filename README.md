@@ -20,7 +20,7 @@ https://github.com/user-attachments/assets/aca02bf1-6fde-4ad5-94bf-df900693b555
 - PHP 8.2+
 - `ext-zip` (for automatic dotLottie v2→v1 conversion)
 - NativePHP Mobile 3.0+
-- Lottie 4.6.0+ (iOS, via SPM — already bundled by NativePHP)
+- Lottie 4.6.0+ (iOS — the `lottie-spm` SPM package, declared automatically via `nativephp.json`)
 - Lottie Compose 6.7.1+ (Android — declared automatically via `nativephp.json`)
 
 ---
@@ -704,7 +704,7 @@ MOBILE_SPLASHSCREEN_ICON_RADIUS=0.22
 | v2 file (LottieFiles Creator default) | Auto-converted to v1 during `copy_assets` |
 | Conversion strips | `fonts`, layer effects (`ef`), `hasMask`, text layers (`ty=5`), `Background` layer |
 
-**Why this matters:** `lottie-spm` 4.6.0 (bundled by NativePHP iOS) only supports dotLottie v1. A v2 file silently fails — blank screen, no error. The conversion happens automatically; no manual script is needed.
+**Why this matters:** `lottie-spm` 4.6.0 (the iOS Lottie renderer this plugin declares in `nativephp.json`) only supports dotLottie v1. A v2 file silently fails — blank screen, no error. The conversion happens automatically; no manual script is needed.
 
 To verify your file format:
 ```bash
@@ -739,7 +739,7 @@ Check the build output for:
 Detected dotLottie v2 — converting to v1 for lottie-spm...
 ```
 
-If absent, verify `animation.path` is set and the file exists. Also confirm no Lottie iOS SPM dependency is declared in your own `nativephp.json` — NativePHP already bundles `lottie-spm` and adding a second Lottie package causes a product naming conflict.
+If absent, verify `animation.path` is set and the file exists. Also make sure you don't declare a Lottie iOS SPM dependency in your own `nativephp.json` — this plugin already declares `lottie-spm`, and a second Lottie package causes a product naming conflict.
 
 ### Gradient colors from ENV not parsing
 
