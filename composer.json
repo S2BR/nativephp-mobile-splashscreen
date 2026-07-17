@@ -12,7 +12,7 @@
     "require": {
         "php": "^8.2",
         "ext-zip": "*",
-        "nativephp/mobile": "^3.0"
+        "nativephp/mobile": "^3.0|^4.0"
     },
     "require-dev": {
         "pestphp/pest": "^4.0"
