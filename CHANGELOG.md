@@ -4,6 +4,13 @@ All notable changes to `nativephp-mobile-splashscreen` are documented in this fi
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.4.0 - 2026-07-21
+
+### Changed
+- Widened the `nativephp/mobile` constraint from `^3.0` to `^3.0|^4.0`, so the plugin now installs alongside NativePHP Mobile v4. No code changes — v3 users are unaffected. Thanks to [@shanerbaner82](https://github.com/shanerbaner82) ([#4](https://github.com/S2BR/nativephp-mobile-splashscreen/pull/4)).
+
+**Full Changelog**: https://github.com/S2BR/nativephp-mobile-splashscreen/compare/v1.3.0...v1.4.0
+
 ## v1.3.0 - 2026-06-14
 
 ### Added
