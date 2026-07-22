@@ -176,7 +176,9 @@ trait GeneratesAndroidCode
 
         // ── Lottie composition ──────────────────────────────────────────────────
         if ($isAnimation) {
-            $lines[] = '        val composition by rememberLottieComposition(';
+            $lines[] = '        // Result captured so a failed load (missing/corrupt file) is';
+            $lines[] = '        // observable — a failure must dismiss the splash, not wedge it.';
+            $lines[] = '        val compositionResult = rememberLottieComposition(';
             $lines[] = '            if (dynamicConfig?.get("animation") != null) {';
             $lines[] = '                val path = java.io.File(filesDir, "storage/app/splashscreen/animations/$resolvedAnimFilename").absolutePath';
             $lines[] = '                LottieCompositionSpec.File(path)';
@@ -184,10 +186,22 @@ trait GeneratesAndroidCode
             $lines[] = '                LottieCompositionSpec.Asset("animations/$resolvedAnimFilename")';
             $lines[] = '            }';
             $lines[] = '        )';
+            $lines[] = '        val composition by compositionResult';
             $lines[] = '        val animatable = rememberLottieAnimatable()';
             $lines[] = '        var loopCount by remember { mutableStateOf(0) }';
             $lines[] = '';
         }
+
+        // ── Failsafe watchdog ───────────────────────────────────────────────────
+        // Content is ready; never wedge behind a splash whose animation is
+        // stuck for ANY reason (unparseable file that reports success, paused
+        // player, …). No-op when the normal exit path already dismissed.
+        $lines[] = '        LaunchedEffect(webViewReadyForSplash) {';
+        $lines[] = '            if (!webViewReadyForSplash) return@LaunchedEffect';
+        $lines[] = '            delay(6000)';
+        $lines[] = '            showSplash = false';
+        $lines[] = '        }';
+        $lines[] = '';
 
         // ── Always emit all transition state variables ───────────────────────────
         $lines[] = '        var isExiting by remember { mutableStateOf(false) }';
@@ -290,11 +304,13 @@ trait GeneratesAndroidCode
 
         // ── Exit coordination ───────────────────────────────────────────────────
         $lines[] = '';
-        $exitKey = $isAnimation ? 'webViewReadyForSplash, loopCount' : 'webViewReadyForSplash';
+        $exitKey = $isAnimation ? 'webViewReadyForSplash, loopCount, compositionResult.isFailure' : 'webViewReadyForSplash';
         $lines[] = '        LaunchedEffect('.$exitKey.') {';
         $lines[] = '            if (!webViewReadyForSplash) return@LaunchedEffect';
         if ($isAnimation) {
-            $lines[] = '            if (!resolvedLoop && loopCount == 0) return@LaunchedEffect';
+            $lines[] = '            // A failed composition never animates, so loopCount would gate';
+            $lines[] = '            // dismissal forever — the "missing .lottie => white screen" bug.';
+            $lines[] = '            if (!resolvedLoop && loopCount == 0 && !compositionResult.isFailure) return@LaunchedEffect';
         }
         $lines[] = '            isExiting = true';
         $lines[] = '            delay(resolvedTransitionDurationMs.toLong() + resolvedDelayAfterMs)';
