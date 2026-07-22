@@ -477,6 +477,14 @@ trait GeneratesIosCode
         $lines[] = '            guard ready else { return }';
         if ($isAnimation) {
             $lines[] = '            if resolvedLoop || animationCompleted { triggerExit() }';
+            $lines[] = '            // Failsafe: content is ready — never wedge behind a splash whose';
+            $lines[] = '            // animation failed to load (missing/corrupt .lottie) or never';
+            $lines[] = '            // completes. triggerExit() is one-shot (exitTriggered), so this';
+            $lines[] = '            // is a no-op when the animation finishes normally first.';
+            $lines[] = '            Task {';
+            $lines[] = '                try? await Task.sleep(nanoseconds: 6_000_000_000)';
+            $lines[] = '                triggerExit()';
+            $lines[] = '            }';
         } else {
             $lines[] = '            triggerExit()';
         }
