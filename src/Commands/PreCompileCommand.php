@@ -310,7 +310,16 @@ class PreCompileCommand extends NativePluginHookCommand
         $hex = $this->resolveFirstBackgroundColor($config);
         $storyboardColor = $this->hexToStoryboardColor($hex);
 
-        $originalPath = $path.'.original';
+        // Keep the backup outside NativePHP/: Xcode syncs that whole folder into the app bundle.
+        $backupDir = $this->buildPath().'/nativephp-backups';
+        $this->ensureDirectory($backupDir);
+        $originalPath = $backupDir.'/LaunchScreen.storyboard.original';
+
+        // Earlier versions kept the backup next to the storyboard; move it out of the bundle.
+        if (file_exists($path.'.original') && ! file_exists($originalPath)) {
+            rename($path.'.original', $originalPath);
+        }
+
         if (! file_exists($originalPath)) {
             copy($path, $originalPath);
         }
